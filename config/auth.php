@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'model' => WatchTime\User::class,
+    'model' => WatchTime\Models\User::class,
 
     /*
     |--------------------------------------------------------------------------

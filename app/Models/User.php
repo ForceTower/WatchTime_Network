@@ -1,6 +1,6 @@
 <?php
 
-namespace WatchTime;
+namespace WatchTime\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
