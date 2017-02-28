@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace WatchTime\Events;
 
 abstract class Event
 {

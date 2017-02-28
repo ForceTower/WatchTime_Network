@@ -1,5 +1,5 @@
 suites:
     main:
-        namespace: App
-        psr4_prefix: App
+        namespace: WatchTime
+        psr4_prefix: WatchTime
         src_path: app

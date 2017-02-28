@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace WatchTime\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
