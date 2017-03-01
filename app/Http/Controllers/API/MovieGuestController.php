@@ -25,10 +25,10 @@ class MovieGuestController extends Controller {
     }
 
     public function details($id) {
-        $movie = $this->movieRepository->findWhere(['tmdb' => $id])->first();
+        $movie = $this->movieRepository->with('genres')->findWhere(['tmdb' => $id])->first();
 
         if (!$movie || $movie['details_loaded'] == 0) {
-            $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.Controller::$API_TMDB_KEY.'&language=en-US'), true);
+            $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&append_to_response=videos,credits'), true);
             return $this->decodeAndSaveMovieDetail($response);
         }
 
@@ -116,7 +116,108 @@ class MovieGuestController extends Controller {
         return [];
     }
 
-    private function decodeAndSaveMovieDetail($response) {
+    private function decodeAndSaveMovieDetail($result) {
+        $name = $result['title'];
+        $tmdb = $result['id'];
 
+        $already_added = $this->movieRepository->findWhere(['tmdb' => $tmdb])->first();
+
+        $tag_line = null;
+        if (isset($result['tagline']))
+            $tag_line = $result['tagline'];
+
+        $overview = '';
+        if (isset($result['overview']))
+            $overview = $result['overview'];
+
+        $imdb = null;
+        if (isset($result['imdb_id']))
+            $imdb = $result['imdb_id'];
+
+        $homepage = null;
+        if (isset($result['homepage']))
+            $homepage = $result['homepage'];
+
+        $runtime = null;
+        if (isset($result['runtime']))
+            $runtime = $result['runtime'];
+
+        $status = null;
+        if(isset($result['status']))
+            $status = $result['status'];
+
+        $release_date = null;
+        if (isset($result['release_date']))
+            $release_date = $result['release_date'];
+
+        $poster_path = null;
+        if (isset($result['poster_path']))
+            $poster_path = $result['poster_path'];
+
+        $backdrop_path = null;
+        if (isset($result['backdrop_path']))
+            $backdrop_path = $result['backdrop_path'];
+
+        $revenue = null;
+        if (isset($result['revenue']))
+            $revenue = $result['revenue'];
+
+        $budget = null;
+        if (isset($result['budget']))
+            $budget = $result['budget'];
+
+        $popularity = $result['popularity'];
+        $vote_count = $result['vote_count'];
+        $vote_average = $result['vote_average'];
+
+
+        $movie_info = [
+            'name' => $name,
+            'overview' => $overview,
+            'tag_line' => $tag_line,
+
+            'imdb' => $imdb,
+            'tmdb' => $tmdb,
+
+            'runtime' => $runtime,
+            'status' => $status,
+            'release_date' => $release_date,
+
+            'budget' => $budget,
+            'revenue' => $revenue,
+
+            'popularity' => $popularity,
+            'vote_count' => $vote_count,
+            'vote_average' => $vote_average,
+
+            'homepage' => $homepage,
+            'poster_path' => $poster_path,
+            'backdrop_path' => $backdrop_path,
+            'details_loaded' => 1,
+        ];
+
+        $movie = null;
+        if ($already_added)
+            $movie = $this->movieRepository->update($movie_info, $already_added['id']);
+        else
+            $movie = $this->movieRepository->create($movie_info);
+
+        $movie_genres = $result['genres'];
+        if ($movie_genres) {
+            foreach($movie_genres as $genre) {
+                $genre_id = $genre['id'];
+
+                $exists = $this->movieGenreRepository->findWhere(['movie_id' => $movie['id'], 'genre_id' => $genre_id])->first();
+                if (!$exists) {
+                    $this->movieGenreRepository->updateOrCreate([
+                        'movie_id' => $movie['id'],
+                        'genre_id' => $genre_id,
+                    ]);
+                }
+            }
+        }
+
+
+        return $movie;
     }
 }

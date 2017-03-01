@@ -13,22 +13,37 @@ class Movie extends Model implements Transformable
     protected $table = 'movies';
     protected $fillable = [
         'name',
-        'tmdb',
         'overview',
+        'tag_line',
+
+        'imdb',
+        'tmdb',
+
+        'budget',
+        'revenue',
+
+        'runtime',
+        'status',
         'release_date',
-        'poster_path',
-        'backdrop_path',
+
         'popularity',
         'vote_count',
         'vote_average',
-        'tag_line',
-        'runtime',
-        'budged',
-        'revenue',
-        'homepage'
+
+        'homepage',
+        'poster_path',
+        'backdrop_path',
+
+        'details_loaded',
     ];
 
     protected $hidden = ['created_at', 'updated_at', 'activated', 'details_loaded'];
+
+    public function transform() {
+        return [
+            'genre_id' => $this->genres->name,
+        ];
+    }
 
     public function genres() {
         return $this->hasMany(MovieGenre::class, 'movie_id', 'id');

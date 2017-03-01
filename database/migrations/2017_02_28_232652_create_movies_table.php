@@ -26,7 +26,7 @@ class CreateMoviesTable extends Migration
 			$table->string('status')->nullable();
 			$table->date('release_date')->nullable();
 
-			$table->bigInteger('budged')->nullable();
+			$table->bigInteger('budget')->nullable();
 			$table->bigInteger('revenue')->nullable();
 
 			$table->decimal('popularity')->default(0);
