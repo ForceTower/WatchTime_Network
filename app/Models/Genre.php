@@ -12,4 +12,7 @@ class Genre extends Model implements Transformable
 
     protected $fillable = [];
 
+    public function movies() {
+        return $this->hasMany(MovieGenre::class, 'genre_id', 'id');
+    }
 }
