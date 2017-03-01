@@ -10,7 +10,7 @@ class MovieGenre extends Model implements Transformable
 {
     use TransformableTrait;
 
-    protected $fillable = [];
+    protected $fillable = ['movie_id', 'genre_id'];
 
     public function genre() {
         return $this->belongsTo(Genre::class, 'genre_id', 'id');

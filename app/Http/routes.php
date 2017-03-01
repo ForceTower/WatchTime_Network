@@ -25,6 +25,10 @@ Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api'], functi
     });
 });
 
+Route::get('tester', 'API\MovieGuestController@tester');
+Route::get('movie/{id}', 'API\MovieGuestController@details');
+Route::get('movie/popular/{page}', 'API\MovieGuestController@listPopular');
+
 Route::get('test2', function() {
     return [
         'id' => 1,

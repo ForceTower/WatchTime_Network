@@ -19,6 +19,7 @@ class CreateMovieGenresTable extends Migration
 			$table->foreign('movie_id')->references('id')->on('movies');
 			$table->integer('genre_id')->unsigned();
 			$table->foreign('genre_id')->references('id')->on('genres');
+			$table->unique(['movie_id', 'genre_id'], 'composite_index');
             $table->timestamps();
 		});
 	}
