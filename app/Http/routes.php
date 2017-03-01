@@ -11,6 +11,32 @@
 |
 */
 
+Route::post('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
+});
+
+Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api'], function() {
+    Route::get('test', function() {
+        return [
+            'id' => 1,
+            'name' => 'Doctor Strange',
+            'runtime' => 108,
+        ];
+    });
+});
+
+Route::get('test2', function() {
+    return [
+        'id' => 1,
+        'name' => 'Doctor Strange',
+        'runtime' => 108,
+    ];
+});
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/test', function() {
+   return app()->make('WatchTime\Repositories\GenreRepository')->all();
 });
