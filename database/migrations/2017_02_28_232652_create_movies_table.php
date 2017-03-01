@@ -40,8 +40,8 @@ class CreateMoviesTable extends Migration
 			$table->string('poster_path')->nullable();
 			$table->string('backdrop_path')->nullable();
 
-			$table->boolean('activated')->default('true');
-			$table->boolean('details_loaded')->default('false');
+			$table->boolean('activated')->default(1);
+			$table->boolean('details_loaded')->default(0);
 
             $table->timestamps();
 		});

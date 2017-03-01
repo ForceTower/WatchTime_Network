@@ -19,8 +19,8 @@ class CreateUsersTable extends Migration
             $table->bigInteger('facebook_id')->unique()->unsigned()->nullable();
             $table->string('password', 60);
             $table->binary('avatar')->nullable();
-            $table->boolean('activated')->default('true');
-            $table->integer('user_level')->default('0');
+            $table->boolean('activated')->default(1);
+            $table->integer('user_level')->default(0);
             $table->bigInteger('time_watched')->unsigned();
             $table->rememberToken();
             $table->timestamps();
