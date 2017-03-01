@@ -137,8 +137,11 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        //Repository
+        //Repository Base
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
+
+        //Repository Internal
+        WatchTime\Providers\RepositoryServiceProvider::class,
 
         /*
          * Application Service Providers...
