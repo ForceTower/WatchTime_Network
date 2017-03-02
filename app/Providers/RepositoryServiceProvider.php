@@ -31,5 +31,25 @@ class RepositoryServiceProvider extends ServiceProvider
             'WatchTime\Repositories\UserRepository',
             'WatchTime\Repositories\UserRepositoryEloquent'
         );
+
+        $this->app->bind(
+            'WatchTime\Repositories\MovieVideoRepository',
+            'WatchTime\Repositories\MovieVideoRepositoryEloquent'
+        );
+
+        $this->app->bind(
+            'WatchTime\Repositories\MovieCastRepository',
+            'WatchTime\Repositories\MovieCastRepositoryEloquent'
+        );
+
+        $this->app->bind(
+            'WatchTime\Repositories\PersonRepository',
+            'WatchTime\Repositories\PersonRepositoryEloquent'
+        );
+
+        $this->app->bind(
+            'WatchTime\Repositories\MovieCrewRepository',
+            'WatchTime\Repositories\MovieCrewRepositoryEloquent'
+        );
     }
 }

@@ -6,33 +6,57 @@ use Illuminate\Http\Request;
 
 use WatchTime\Http\Requests;
 use WatchTime\Http\Controllers\Controller;
+use WatchTime\Repositories\MovieCastRepository;
+use WatchTime\Repositories\MovieCrewRepository;
 use WatchTime\Repositories\MovieGenreRepository;
 use WatchTime\Repositories\MovieRepository;
+use WatchTime\Repositories\MovieVideoRepository;
+use WatchTime\Repositories\PersonRepository;
 
 class MovieGuestController extends Controller {
     public static $todayPopular = [];
+
     private $movieRepository;
     private $movieGenreRepository;
+    private $movieVideoRepository;
+    private $movieCastRepository;
+    private $personRepository;
+    private $movieCrewRepository;
 
-    public function __construct(MovieRepository $movieRepository, MovieGenreRepository $movieGenreRepository) {
+    public function __construct(MovieRepository $movieRepository,
+                                MovieGenreRepository $movieGenreRepository,
+                                MovieVideoRepository $movieVideoRepository,
+                                MovieCastRepository $movieCastRepository,
+                                PersonRepository $personRepository,
+                                MovieCrewRepository $movieCrewRepository) {
         $this->movieRepository = $movieRepository;
         $this->movieGenreRepository = $movieGenreRepository;
-    }
-
-    public function tester() {
-        $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/popular?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page=1'), true);
-        dd($response);
+        $this->movieVideoRepository = $movieVideoRepository;
+        $this->movieCastRepository = $movieCastRepository;
+        $this->personRepository = $personRepository;
+        $this->movieCrewRepository = $movieCrewRepository;
     }
 
     public function details($id) {
+        if (!is_numeric($id)) {
+            return [
+                'error' => '400',
+                'error_description' => 'Movie ID must be numeric, but ' . $id . ' was received',
+            ];
+        }
+
         $movie = $this->movieRepository->with('genres')->findWhere(['tmdb' => $id])->first();
 
         if (!$movie || $movie['details_loaded'] == 0) {
             $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&append_to_response=videos,credits'), true);
-            return $this->decodeAndSaveMovieDetail($response);
+            $this->decodeAndSaveMovieDetail($response);
         }
-
+        $movie = $this->movieRepository->skipPresenter(false)->with('genres')->findWhere(['tmdb' => $id]);
         return $movie;
+    }
+
+    public function listRelease($page) {
+
     }
 
     public function listPopular($page){
@@ -217,6 +241,82 @@ class MovieGuestController extends Controller {
             }
         }
 
+
+        $movie_videos = $result['videos'];
+        if ($movie_videos) {
+            $movie_videos = $movie_videos['results'];
+            foreach($movie_videos as $video) {
+                $name = $video['name'];
+                $key = $video['key'];
+                $site = $video['site'];
+                $type = $video['type'];
+
+                if ($site === 'YouTube') {
+                    $this->movieVideoRepository->create([
+                        'movie_id' => $movie['id'],
+                        'name' => $name,
+                        'key' => $key,
+                        'type' => $type,
+                    ]);
+                }
+            }
+        }
+
+        $movie_credits = $result['credits'];
+
+        $movie_cast = $movie_credits['cast'];
+        foreach ($movie_cast as $cast) {
+            $name = $cast['name'];
+            $tmdb = $cast['id'];
+            $profile = $cast['profile_path'];
+            $char = $cast['character'];
+
+            if (strpos($char, '(uncredited)') !== false)
+                continue;
+
+            $person = $this->personRepository->findWhere(['tmdb' => $tmdb])->first();
+            if (!$person) {
+                $person = $this->personRepository->create([
+                        'name' => $name,
+                        'tmdb' => $tmdb,
+                        'profile_path' => $profile,
+                    ]
+                );
+            }
+
+            $this->movieCastRepository->create([
+                'movie_id' => $movie['id'],
+                'person_id' => $person['id'],
+                'character' => $char,
+            ]);
+        }
+
+        $movie_crew = $movie_credits['crew'];
+
+        foreach($movie_crew as $crew) {
+            $name = $crew['name'];
+            $tmdb = $crew['id'];
+            $profile = $crew['profile_path'];
+            $job = $crew['job'];
+
+            if ($job === "Director" || $job === "Screenplay") {
+                $person = $this->personRepository->findWhere(['tmdb' => $tmdb])->first();
+                if (!$person) {
+                    $person = $this->personRepository->create([
+                            'name' => $name,
+                            'tmdb' => $tmdb,
+                            'profile_path' => $profile,
+                        ]
+                    );
+                }
+
+                $this->movieCrewRepository->create([
+                    'movie_id' => $movie['id'],
+                    'person_id' => $person['id'],
+                    'job' => $job,
+                ]);
+            }
+        }
 
         return $movie;
     }

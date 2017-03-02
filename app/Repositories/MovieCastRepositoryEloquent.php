@@ -4,17 +4,16 @@ namespace WatchTime\Repositories;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
-use WatchTime\Repositories\MovieRepository;
-use WatchTime\Models\Movie;
-use WatchTime\Presenters\MoviePresenter;
+use WatchTime\Repositories\MovieCastRepository;
+use WatchTime\Models\MovieCast;
+use WatchTime\Validators\MovieCastValidator;
 
 /**
- * Class MovieRepositoryEloquent
+ * Class MovieCastRepositoryEloquent
  * @package namespace WatchTime\Repositories;
  */
-class MovieRepositoryEloquent extends BaseRepository implements MovieRepository
+class MovieCastRepositoryEloquent extends BaseRepository implements MovieCastRepository
 {
-    protected $skipPresenter = true;
     /**
      * Specify Model class name
      *
@@ -22,7 +21,7 @@ class MovieRepositoryEloquent extends BaseRepository implements MovieRepository
      */
     public function model()
     {
-        return Movie::class;
+        return MovieCast::class;
     }
 
     
@@ -33,10 +32,5 @@ class MovieRepositoryEloquent extends BaseRepository implements MovieRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
-    }
-
-    public function presenter()
-    {
-        return MoviePresenter::class;
     }
 }

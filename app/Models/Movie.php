@@ -39,14 +39,20 @@ class Movie extends Model implements Transformable
 
     protected $hidden = ['created_at', 'updated_at', 'activated', 'details_loaded'];
 
-    public function transform() {
-        return [
-            'genre_id' => $this->genres->name,
-        ];
-    }
-
     public function genres() {
         return $this->hasMany(MovieGenre::class, 'movie_id', 'id');
+    }
+
+    public function videos() {
+        return $this->hasMany(MovieVideo::class, 'movie_id', 'id');
+    }
+
+    public function cast() {
+        return $this->hasMany(MovieCast::class, 'movie_id', 'id');
+    }
+
+    public function crew() {
+        return $this->hasMany(MovieCrew::class, 'movie_id', 'id');
     }
 
 }

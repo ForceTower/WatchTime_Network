@@ -30,11 +30,8 @@ Route::get('movie/{id}', 'API\MovieGuestController@details');
 Route::get('movie/popular/{page}', 'API\MovieGuestController@listPopular');
 
 Route::get('test2', function() {
-    return [
-        'id' => 1,
-        'name' => 'Doctor Strange',
-        'runtime' => 108,
-    ];
+    $kappa = "Youtube";
+    echo ('Youtube' === $kappa) ? 'true' : 'false';
 });
 
 Route::get('/', function () {
