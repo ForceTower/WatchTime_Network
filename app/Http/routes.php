@@ -28,6 +28,9 @@ Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api'], functi
 Route::get('tester', 'API\MovieGuestController@tester');
 Route::get('movie/{id}', 'API\MovieGuestController@details');
 Route::get('movies/popular/{page}', 'API\MovieGuestController@listPopular');
+Route::get('movies/rating/{page}', 'API\MovieGuestController@listRating');
+Route::get('movies/on_theaters/{page}', 'API\MovieGuestController@listOnTheaters');
+Route::get('movies/upcoming/{page}', 'API\MovieGuestController@listUpcoming');
 Route::get('movies/release', 'API\MovieGuestController@listRelease');
 
 Route::get('test2', function() {

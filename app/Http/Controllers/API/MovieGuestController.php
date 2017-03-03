@@ -71,11 +71,26 @@ class MovieGuestController extends Controller {
     }
 
     public function listPopular($page){
-        if (isset(MovieGuestController::$todayPopular[$page])) {
+        /*if (isset(MovieGuestController::$todayPopular[$page])) {
             return MovieGuestController::$todayPopular[$page];
-        }
+        }*/
 
         $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/popular?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page='.$page), true);
+        return $this->decodeAndSaveResponse($page, $response);
+    }
+
+    public function listRating($page) {
+        $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/top_rated?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page='.$page), true);
+        return $this->decodeAndSaveResponse($page, $response);
+    }
+
+    public function listOnTheaters($page) {
+        $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/now_playing?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page='.$page), true);
+        return $this->decodeAndSaveResponse($page, $response);
+    }
+
+    public function listUpcoming($page) {
+        $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/upcoming?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page='.$page), true);
         return $this->decodeAndSaveResponse($page, $response);
     }
 
@@ -144,7 +159,7 @@ class MovieGuestController extends Controller {
                 }
             }
 
-            MovieGuestController::$todayPopular[$page] = $today;
+            //$big_array[$page] = $today;
             return $today;
         }
 
