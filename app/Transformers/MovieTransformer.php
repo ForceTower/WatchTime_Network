@@ -4,6 +4,7 @@ namespace WatchTime\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use WatchTime\Models\Movie;
+use WatchTime\Models\MovieImage;
 
 /**
  * Class MovieTransformer
@@ -12,7 +13,7 @@ use WatchTime\Models\Movie;
 class MovieTransformer extends TransformerAbstract
 {
 
-    protected $defaultIncludes = ['genres', 'videos', 'cast', 'crew'];
+    protected $defaultIncludes = ['genres', 'videos', 'cast', 'crew', 'images'];
 
     /**
      * Transform the \Movie entity
@@ -62,5 +63,9 @@ class MovieTransformer extends TransformerAbstract
 
     public function includeCrew(Movie $model) {
         return $this->collection($model->crew, new MovieCrewTransformer());
+    }
+
+    public function includeImages(Movie $model) {
+        return $this->collection($model->images, new MovieImageTransformer());
     }
 }

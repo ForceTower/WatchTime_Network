@@ -27,7 +27,8 @@ Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api'], functi
 
 Route::get('tester', 'API\MovieGuestController@tester');
 Route::get('movie/{id}', 'API\MovieGuestController@details');
-Route::get('movie/popular/{page}', 'API\MovieGuestController@listPopular');
+Route::get('movies/popular/{page}', 'API\MovieGuestController@listPopular');
+Route::get('movies/release', 'API\MovieGuestController@listRelease');
 
 Route::get('test2', function() {
     $kappa = "Youtube";

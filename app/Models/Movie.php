@@ -55,4 +55,8 @@ class Movie extends Model implements Transformable
         return $this->hasMany(MovieCrew::class, 'movie_id', 'id');
     }
 
+    public function images() {
+        return $this->hasMany(MovieImage::class, 'movie_id', 'id');
+    }
+
 }

@@ -9,6 +9,7 @@ use WatchTime\Http\Controllers\Controller;
 use WatchTime\Repositories\MovieCastRepository;
 use WatchTime\Repositories\MovieCrewRepository;
 use WatchTime\Repositories\MovieGenreRepository;
+use WatchTime\Repositories\MovieImageRepository;
 use WatchTime\Repositories\MovieRepository;
 use WatchTime\Repositories\MovieVideoRepository;
 use WatchTime\Repositories\PersonRepository;
@@ -22,19 +23,22 @@ class MovieGuestController extends Controller {
     private $movieCastRepository;
     private $personRepository;
     private $movieCrewRepository;
+    private $movieImageRepository;
 
     public function __construct(MovieRepository $movieRepository,
                                 MovieGenreRepository $movieGenreRepository,
                                 MovieVideoRepository $movieVideoRepository,
                                 MovieCastRepository $movieCastRepository,
                                 PersonRepository $personRepository,
-                                MovieCrewRepository $movieCrewRepository) {
+                                MovieCrewRepository $movieCrewRepository,
+                                MovieImageRepository $movieImageRepository) {
         $this->movieRepository = $movieRepository;
         $this->movieGenreRepository = $movieGenreRepository;
         $this->movieVideoRepository = $movieVideoRepository;
         $this->movieCastRepository = $movieCastRepository;
         $this->personRepository = $personRepository;
         $this->movieCrewRepository = $movieCrewRepository;
+        $this->movieImageRepository = $movieImageRepository;
     }
 
     public function details($id) {
@@ -49,14 +53,21 @@ class MovieGuestController extends Controller {
 
         if (!$movie || $movie['details_loaded'] == 0) {
             $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&append_to_response=videos,credits'), true);
-            $this->decodeAndSaveMovieDetail($response);
+            $movie = $this->decodeAndSaveMovieDetail($response);
+            $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/'.$id.'/images?api_key='.Controller::$API_TMDB_KEY.''), true);
+            $this->decodeAndSaveMovieBackdrops($response, $movie['id']);
         }
         $movie = $this->movieRepository->skipPresenter(false)->with('genres')->findWhere(['tmdb' => $id]);
         return $movie;
     }
 
-    public function listRelease($page) {
-
+    public function listRelease() {
+        $movies = $this->movieRepository
+            ->skipPresenter(false)
+            ->scopeQuery(function ($query) {
+                return $query->where('release_date', '<', date("Y-m-d H:i:s"));
+            })->orderBy('release_date', 'desc')->paginate(20);
+        return $movies;
     }
 
     public function listPopular($page){
@@ -319,5 +330,18 @@ class MovieGuestController extends Controller {
         }
 
         return $movie;
+    }
+
+    private function decodeAndSaveMovieBackdrops($response, $id) {
+        $backdrops = $response['backdrops'];
+
+        foreach ($backdrops as $backdrop) {
+            $path = $backdrop['file_path'];
+
+            $this->movieImageRepository->create([
+                'movie_id' => $id,
+                'image_path' => $path,
+            ]);
+        }
     }
 }

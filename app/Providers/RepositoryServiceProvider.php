@@ -51,5 +51,10 @@ class RepositoryServiceProvider extends ServiceProvider
             'WatchTime\Repositories\MovieCrewRepository',
             'WatchTime\Repositories\MovieCrewRepositoryEloquent'
         );
+
+        $this->app->bind(
+            'WatchTime\Repositories\MovieImageRepository',
+            'WatchTime\Repositories\MovieImageRepositoryEloquent'
+        );
     }
 }
