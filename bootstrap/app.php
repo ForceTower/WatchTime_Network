@@ -41,6 +41,8 @@ $app->singleton(
     WatchTime\Exceptions\Handler::class
 );
 
+$app->register(SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

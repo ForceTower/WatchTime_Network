@@ -15,17 +15,17 @@ Route::post('oauth/access_token', function() {
     return Response::json(Authorizer::issueAccessToken());
 });
 
-Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api'], function() {
-    Route::get('test', function() {
-        return [
-            'id' => 1,
-            'name' => 'Doctor Strange',
-            'runtime' => 108,
-        ];
+Route::group(['prefix' => 'api', 'as' => 'api'], function() {
+    Route::post('facebook/login', 'API\AccountController@facebookLogin');
+
+    Route::group(['prefix' => 'watch_time', 'middleware' => 'oauth', 'as' => '.watch_time'], function() {
+        Route::get('user/me', 'API\AccountController@myProfile');
+        Route::get('user/{id}', 'API\AccountController@userProfile');
+        Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
+        route::post('user/me/cover', 'API\AccountController@coverUpdate');
     });
 });
-
-Route::get('tester', 'API\MovieGuestController@tester');
+Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
 Route::get('movie/{id}', 'API\MovieGuestController@details');
 Route::get('movies/popular/{page}', 'API\MovieGuestController@listPopular');
 Route::get('movies/rating/{page}', 'API\MovieGuestController@listRating');
@@ -33,15 +33,7 @@ Route::get('movies/on_theaters/{page}', 'API\MovieGuestController@listOnTheaters
 Route::get('movies/upcoming/{page}', 'API\MovieGuestController@listUpcoming');
 Route::get('movies/release', 'API\MovieGuestController@listRelease');
 
-Route::get('test2', function() {
-    $kappa = "Youtube";
-    echo ('Youtube' === $kappa) ? 'true' : 'false';
-});
-
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', function() {
-   return app()->make('WatchTime\Repositories\GenreRepository')->all();
-});

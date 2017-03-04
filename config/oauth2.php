@@ -39,6 +39,12 @@ return [
             'access_token_ttl' => 7200,
             'refresh_token_ttl' => 36000
         ],
+
+        'no_password' => [
+            'class' => '\WatchTime\Http\OAuth2\Grant\NoPasswordGrant',
+            'callback' => '\WatchTime\Http\OAuth2\NoPasswordGrantVerifier@verify',
+            'access_token_ttl' => 7200,
+        ],
     ],
 
     /*

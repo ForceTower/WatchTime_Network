@@ -15,6 +15,7 @@ class MovieImageTransformer extends TransformerAbstract
     public function transform(MovieImage $model)
     {
         return [
+            'id' => $model->id,
             'movie' => $model->movie->name,
             'image_path' => $model->image_path,
         ];

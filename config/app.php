@@ -147,6 +147,9 @@ return [
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
 
+        //Facebook
+        SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -205,6 +208,9 @@ return [
 
         //API Authorizer
         'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
+
+        //Facebook
+        'Facebook' => SammyK\LaravelFacebookSdk\FacebookFacade::class,
 
     ],
 

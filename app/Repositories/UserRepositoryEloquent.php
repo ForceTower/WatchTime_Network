@@ -4,6 +4,7 @@ namespace WatchTime\Repositories;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
+use WatchTime\Presenters\UserPresenter;
 use WatchTime\Repositories\UserRepository;
 use WatchTime\Models\User;
 use WatchTime\Validators\UserValidator;
@@ -14,6 +15,7 @@ use WatchTime\Validators\UserValidator;
  */
 class UserRepositoryEloquent extends BaseRepository implements UserRepository
 {
+    protected $skipPresenter = true;
     /**
      * Specify Model class name
      *
@@ -32,5 +34,10 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function presenter()
+    {
+        return UserPresenter::class;
     }
 }
