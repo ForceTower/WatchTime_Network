@@ -24,4 +24,8 @@ class User extends Model implements Transformable, AuthenticatableContract, Auth
         return $this->hasOne(MovieImage::class, 'id', 'cover_picture');
     }
 
+    public function moviesWatched() {
+        return $this->hasMany(UserMoviesWatched::class, 'user_id', 'id');
+    }
+
 }

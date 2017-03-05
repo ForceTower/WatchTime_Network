@@ -43,6 +43,10 @@ class Movie extends Model implements Transformable
         return $this->hasMany(MovieGenre::class, 'movie_id', 'id');
     }
 
+    public function watched() {
+        return $this->hasMany(UserMoviesWatched::class, 'movie_id', 'id');
+    }
+
     public function videos() {
         return $this->hasMany(MovieVideo::class, 'movie_id', 'id');
     }

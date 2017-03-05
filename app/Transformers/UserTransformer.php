@@ -4,6 +4,7 @@ namespace WatchTime\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use WatchTime\Models\User;
+use WatchTime\Models\UserMoviesWatched;
 
 /**
  * Class UserTransformer
@@ -12,6 +13,7 @@ use WatchTime\Models\User;
 class UserTransformer extends TransformerAbstract
 {
 
+    protected $defaultIncludes = ['movies'];
     /**
      * Transform the \User entity
      * @param \User $model
@@ -37,6 +39,10 @@ class UserTransformer extends TransformerAbstract
                 'cover' => $model->cover->image_path,
             ];
         }
+    }
+
+    public function includeMovies(User $model) {
+        return $this->collection($model->moviesWatched, new UserMoviesWatchedTransformer());
     }
 
 }

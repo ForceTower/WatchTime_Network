@@ -23,6 +23,7 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
         Route::get('user/{id}', 'API\AccountController@userProfile');
         Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
         route::post('user/me/cover', 'API\AccountController@coverUpdate');
+        route::post('user/me/movie_watched', 'API\UserProfileController@markAsWatched');
     });
 });
 Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
