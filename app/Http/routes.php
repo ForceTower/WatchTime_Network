@@ -24,6 +24,7 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
         Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
         route::post('user/me/cover', 'API\AccountController@coverUpdate');
         route::post('user/me/movie_watched', 'API\UserProfileController@markAsWatched');
+        route::post('user/me/watchlist/movie', 'API\UserProfileController@addMovieToWatchlist');
     });
 });
 Route::get('user/{id}/profile_image', 'API\AccountController@userImage');

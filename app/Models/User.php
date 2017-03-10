@@ -28,4 +28,9 @@ class User extends Model implements Transformable, AuthenticatableContract, Auth
         return $this->hasMany(UserMoviesWatched::class, 'user_id', 'id');
     }
 
+    public function moviesList() {
+        return $this->hasMany(UserMovieWatchList::class, 'user_id', 'id');
+    }
+
+
 }

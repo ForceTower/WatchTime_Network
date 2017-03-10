@@ -65,16 +65,14 @@ class MovieGuestController extends Controller {
         $movies = $this->movieRepository
             ->skipPresenter(false)
             ->scopeQuery(function ($query) {
-                return $query->where('release_date', '<', date("Y-m-d H:i:s"));
+                return $query->where('release_date', '<', date("Y-m-d H:i:s"))
+                    ->where('status', '=', 'Released')
+                    ->where('vote_count', '>', 299);
             })->orderBy('release_date', 'desc')->paginate(20);
         return $movies;
     }
 
     public function listPopular($page){
-        /*if (isset(MovieGuestController::$todayPopular[$page])) {
-            return MovieGuestController::$todayPopular[$page];
-        }*/
-
         $response = json_decode(file_get_contents('https://api.themoviedb.org/3/movie/popular?api_key='.Controller::$API_TMDB_KEY.'&language=en-US&page='.$page), true);
         return $this->decodeAndSaveResponse($page, $response);
     }
