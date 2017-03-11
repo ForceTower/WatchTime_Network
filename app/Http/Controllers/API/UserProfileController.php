@@ -79,16 +79,27 @@ class UserProfileController extends Controller{
         if (!$movie)
             return ['error' => true, 'error_description' => 'Movie does not exist', 'error_code' => 0];
 
-        $existing = $this->moviesWatchlistRepository->findWhere(['user_id' => $userID, 'movie_id' => $movie['id']])->first();
+        $existing = $this->moviesWatchlistRepository->skipPresenter(true)->findWhere(['user_id' => $userID, 'movie_id' => $movie['id']])->first();
         if ($existing)
-            return ['error' => true, 'error_description' => 'Movie Already Watched', 'error_code' => 1];
+            return ['error' => true, 'error_description' => 'Movie Already on Watchlist', 'error_code' => 1];
 
         $this->moviesWatchlistRepository->create([
             'user_id' => $userID,
             'movie_id' => $movie['id'],
         ]);
 
-        return ['success' => 'Movie marked as Watched', 'success_code' => 1];
+        return ['success' => 'Movie Added to Watchlist', 'success_code' => 1];
+    }
+
+    public function getWatchlist() {
+        $userID = Authorizer::getResourceOwnerId();
+        $user = $this->userRepository->find($userID);
+        if (!$user)
+            return ['error' => true, 'error_description' => 'User not logged', 'error_code' => -1];
+
+        $watchlist = $this->moviesWatchlistRepository->skipPresenter(false)->findWhere(['user_id' => $userID]);
+        return $watchlist;
+
     }
 
 }

@@ -4,6 +4,7 @@ namespace WatchTime\Repositories;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
+use WatchTime\Presenters\UserMovieWatchlistPresenter;
 use WatchTime\Repositories\UserMovieWatchListRepository;
 use WatchTime\Models\UserMovieWatchList;
 use WatchTime\Validators\UserMovieWatchListValidator;
@@ -32,5 +33,10 @@ class UserMovieWatchListRepositoryEloquent extends BaseRepository implements Use
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function presenter()
+    {
+        return UserMovieWatchlistPresenter::class;
     }
 }

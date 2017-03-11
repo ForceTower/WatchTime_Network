@@ -11,6 +11,7 @@ use WatchTime\Models\UserMovieWatchList;
  */
 class UserMovieWatchListTransformer extends TransformerAbstract
 {
+    protected $defaultIncludes = ['genres'];
 
     /**
      * Transform the \UserMovieWatchList entity
@@ -22,11 +23,15 @@ class UserMovieWatchListTransformer extends TransformerAbstract
     {
         return [
             'id'         => (int) $model->id,
-
-            /* place your other model properties here */
-
-            'created_at' => $model->created_at,
-            'updated_at' => $model->updated_at
+            'tmdb'       => (int) $model->movie->tmdb,
+            'name'       => $model->movie->name,
+            'runtime'    => $model->movie->runtime,
+            'image'      => $model->movie->poster_path,
+            'date_added' => $model->created_at->format('d/m/Y'),
         ];
+    }
+
+    public function includeGenres(UserMovieWatchList $model) {
+        return $this->collection($model->movie->genres, new MovieGenreTransformer());
     }
 }

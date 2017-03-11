@@ -22,9 +22,11 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
         Route::get('user/me', 'API\AccountController@myProfile');
         Route::get('user/{id}', 'API\AccountController@userProfile');
         Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
-        route::post('user/me/cover', 'API\AccountController@coverUpdate');
-        route::post('user/me/movie_watched', 'API\UserProfileController@markAsWatched');
-        route::post('user/me/watchlist/movie', 'API\UserProfileController@addMovieToWatchlist');
+        Route::post('user/me/cover', 'API\AccountController@coverUpdate');
+        Route::post('user/me/movie_watched', 'API\UserProfileController@markAsWatched');
+        Route::get('user/me/watchlist', 'API\UserProfileController@getWatchlist');
+        Route::post('user/me/watchlist/movie', 'API\UserProfileController@addMovieToWatchlist');
+
     });
 });
 Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
