@@ -26,6 +26,8 @@ class UserMovieWatchListTransformer extends TransformerAbstract
             'tmdb'       => (int) $model->movie->tmdb,
             'name'       => $model->movie->name,
             'runtime'    => $model->movie->runtime,
+            'rating'     => $model->movie->vote_average,
+            'tag_line'   => $model->movie->tag_line,
             'image'      => $model->movie->poster_path,
             'date_added' => $model->created_at->format('d/m/Y'),
         ];
