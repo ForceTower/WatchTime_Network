@@ -17,9 +17,9 @@ class CreateAccountRequest extends Request {
 
     public function rules() {
         return [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+            'name' => 'required|max:255',
+            'email' => 'required|unique:users|max:255',
+            'password' => 'required|min:4|max:16',
             'avatar' => 'mimes:png,jpg,jpeg'
         ];
     }

@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
+use WatchTime\Http\Controllers\Auth\AuthController;
 use WatchTime\Http\Controllers\Controller;
 use WatchTime\Http\Requests\CoverUpdateRequest;
+use WatchTime\Http\Requests\CreateAccountRequest;
 use WatchTime\Http\Requests\FacebookAPILoginRequest;
 use WatchTime\Repositories\UserRepository;
 
@@ -106,6 +108,8 @@ class AccountController extends Controller {
                 ];
 
                 $user = $this->userRepository->create($userData);
+                $uid = $user->id;
+                $status = file_put_contents("profiles/$uid.png", $data);
 
                 $user->avatar = $img_data;
                 $user->save();
@@ -125,6 +129,11 @@ class AccountController extends Controller {
     }
 
     public function createAccount(CreateAccountRequest $request) {
-
+        $data = $request->all();
+        $this->userRepository->create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
     }
 }
