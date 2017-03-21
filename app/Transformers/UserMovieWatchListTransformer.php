@@ -9,7 +9,7 @@ use WatchTime\Models\UserMovieWatchList;
  * Class UserMovieWatchListTransformer
  * @package namespace WatchTime\Transformers;
  */
-class UserMovieWatchListTransformer extends TransformerAbstract
+class UserMovieWatchlistTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = ['genres'];
 
