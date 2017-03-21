@@ -42,6 +42,11 @@ class UserProfileController extends Controller{
         if (!$movie)
             return ['error' => true, 'error_description' => 'Movie does not exist', 'error_code' => 0];
 
+        $on_watchlist = $this->moviesWatchlistRepository->skipPresenter(true)->findWhere(['user_id' => $userID, 'movie_id' => $movie['id']])->first();
+        if($on_watchlist) {
+            $on_watchlist->delete();
+        }
+
         $existing = $this->moviesWatchedRepository->findWhere(['user_id' => $userID, 'movie_id' => $movie['id']])->first();
 
         if ($existing)
@@ -89,6 +94,27 @@ class UserProfileController extends Controller{
         ]);
 
         return ['success' => 'Movie Added to Watchlist', 'success_code' => 1];
+    }
+
+    public function removeMovieFromWatchlist(HasIndexTmdbRequest $request) {
+        $userID = Authorizer::getResourceOwnerId();
+        $user = $this->userRepository->find($userID);
+        if (!$user)
+            return ['error' => true, 'error_description' => 'User not logged', 'error_code' => -1];
+
+        $tmdb = $request->all()['tmdb'];
+
+        $movie = $this->movieRepository->findWhere(['tmdb' => $tmdb])->first();
+        if (!$movie)
+            return ['error' => true, 'error_description' => 'Movie does not exist', 'error_code' => 0];
+
+        $on_watchlist = $this->moviesWatchlistRepository->skipPresenter(true)->findWhere(['user_id' => $userID, 'movie_id' => $movie['id']])->first();
+        if($on_watchlist) {
+            $on_watchlist->delete();
+            return ['success' => 'Item removed'];
+        }
+
+        return ['error' => true, 'error_code' => 1];
     }
 
     public function getWatchlist() {

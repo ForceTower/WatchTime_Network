@@ -123,4 +123,8 @@ class AccountController extends Controller {
         }
 
     }
+
+    public function createAccount(CreateAccountRequest $request) {
+
+    }
 }

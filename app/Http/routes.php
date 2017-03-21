@@ -25,7 +25,8 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
         Route::post('user/me/cover', 'API\AccountController@coverUpdate');
         Route::post('user/me/movie_watched', 'API\UserProfileController@markAsWatched');
         Route::get('user/me/watchlist', 'API\UserProfileController@getWatchlist');
-        Route::post('user/me/watchlist/movie', 'API\UserProfileController@addMovieToWatchlist');
+        Route::post('user/me/watchlist/add/movie', 'API\UserProfileController@addMovieToWatchlist');
+        Route::post('user/me/watchlist/remove/movie', 'API\UserProfileController@removeMovieFromWatchlist');
 
     });
 });
