@@ -59,8 +59,8 @@ class AccountController extends Controller {
         if (!$user_image)
             return redirect('https://pbs.twimg.com/profile_images/716487122224439296/HWPluyjs.jpg');
 
-        header('Content-Type: image/jpeg');
-        echo $user_image;
+        header('content-type: '. 'image/png');
+        return readfile("/profile_img/$id.png");
     }
 
     public function userProfile($id) {
@@ -108,8 +108,9 @@ class AccountController extends Controller {
                 ];
 
                 $user = $this->userRepository->create($userData);
+
                 $uid = $user->id;
-                $status = file_put_contents("profiles/$uid.png", $data);
+                file_put_contents(public_path()."/profile_img/$uid.png", $img_data);
 
                 $user->avatar = $img_data;
                 $user->save();
