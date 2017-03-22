@@ -159,6 +159,8 @@ class AccountController extends Controller {
             file_put_contents(public_path() . "/profile_img/$uid.png", $data_image);
         }
 
+        $user->save();
+
         return [
             'success' => 'Account Created',
         ];
