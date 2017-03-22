@@ -17,6 +17,7 @@ Route::post('oauth/access_token', function() {
 
 Route::group(['prefix' => 'api', 'as' => 'api'], function() {
     Route::post('facebook/login', 'API\AccountController@facebookLogin');
+    Route::post('user/sign_up', 'API\AccountController@createAccount');
 
     Route::group(['prefix' => 'watch_time', 'middleware' => 'oauth', 'as' => '.watch_time'], function() {
         Route::get('user/me', 'API\AccountController@myProfile');
@@ -30,6 +31,7 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
 
     });
 });
+
 Route::get('user/{id}/profile_image', 'API\AccountController@userImage');
 Route::get('movie/{id}', 'API\MovieGuestController@details');
 Route::get('movies/popular/{page}', 'API\MovieGuestController@listPopular');

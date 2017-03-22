@@ -131,10 +131,36 @@ class AccountController extends Controller {
 
     public function createAccount(CreateAccountRequest $request) {
         $data = $request->all();
-        $this->userRepository->create([
+
+        $existing = $this->userRepository->skipPresenter(true)->findWhere(['email' => $data['email']])->first();
+        if ($existing)
+            return [
+                'error' => true,
+                'error_description' => 'Email already registered',
+                'error_code' => 0,
+            ];
+
+        $boolean = false;
+        $data_image = null;
+        if($data['image'] !== 'no image') {
+            $boolean = true;
+            $data_image = base64_decode($data['image']);
+        }
+
+        $user = $this->userRepository->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+
+        $uid = $user['id'];
+        if ($boolean) {
+            $user->avatar = $data_image;
+            file_put_contents(public_path() . "/profile_img/$uid.png", $data_image);
+        }
+
+        return [
+            'success' => 'Account Created',
+        ];
     }
 }
