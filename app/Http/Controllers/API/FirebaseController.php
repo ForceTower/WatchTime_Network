@@ -25,13 +25,12 @@ class FirebaseController extends Controller {
     public function test() {
         $optionBuilder = new OptionsBuilder();
         $optionBuilder->setTimeToLive(60*20);
-        $optionBuilder->setCollapseKey('Tester');
 
         $notificationBuilder = new PayloadNotificationBuilder('Hum...');
-        $notificationBuilder->setBody('Realmente me faz pensar')->setSound('default')->setIcon('kappa');
+        $notificationBuilder->setBody('Realmente me faz pensar')->setSound('default')->setIcon('app_logo');
 
         $dataBuilder = new PayloadDataBuilder();
-        $dataBuilder->addData(['message' => 'Server Test Message']);
+        $dataBuilder->addData(['message' => 'Thinking...', 'title' => 'Hum...']);
 
         $option = $optionBuilder->build();
         $notification = $notificationBuilder->build();
@@ -49,7 +48,7 @@ class FirebaseController extends Controller {
         if(sizeof($tokens) === 0)
             return;
 
-        $downstreamResponse = FCM::sendTo($tokens, $option, $notification, $data);
+        $downstreamResponse = FCM::sendTo($tokens, $option, null, $data);
 
         $downstreamResponse->numberSuccess();
         $downstreamResponse->numberFailure();
