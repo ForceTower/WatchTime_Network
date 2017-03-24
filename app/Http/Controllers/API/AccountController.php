@@ -22,6 +22,8 @@ use WatchTime\Http\Requests\FacebookAPILoginRequest;
 use WatchTime\Http\Requests\GoogleAPILoginRequest;
 use WatchTime\Http\Requests\SetFirebaseTokenRequest;
 use WatchTime\Repositories\UserRepository;
+use WatchTime\Threads\LaravelWorker;
+use WatchTime\Threads\UserFriendsNotifyThread;
 
 class AccountController extends Controller {
     private $userRepository;
@@ -82,7 +84,7 @@ class AccountController extends Controller {
         $data = $request->all();
 
         try {
-            $response = $this->facebookSdk->get('/me?fields=id,name,email,picture.type(large)', $data['facebook_token']);
+            $response = $this->facebookSdk->get('/me?fields=id,name,email,picture.type(large),friends,video.watches', $data['facebook_token']);
         } catch(FacebookSDKException $e) {
             return [
                 'error' => true,
@@ -125,6 +127,15 @@ class AccountController extends Controller {
 
                 $array = $this->userRepository->skipPresenter(false)->find($user['id']);
                 $array['not_registered'] = 'Account Created';
+
+                if (isset($userNode['friends'])) {
+                    $object = new UserFriendsNotifyThread($userNode->getName(), $userNode['friends'], $this->userRepository, "/profile_img/$uid.png");
+                    //$object->executeTask();
+                    $worker = new LaravelWorker($object);
+                    $worker->start();
+                    $worker->join();
+                }
+
                 Auth::login($user);
                 return $array;
             }

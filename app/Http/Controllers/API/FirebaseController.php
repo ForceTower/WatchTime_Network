@@ -16,11 +16,54 @@ use LaravelFCM\Facades\FCM;
 use WatchTime\Repositories\UserRepository;
 
 class FirebaseController extends Controller {
+    const NEW_FRIEND = 0;
+
     private $userRepository;
 
     public function __construct(UserRepository $userRepository) {
         $this->userRepository = $userRepository;
     }
+
+    public static function sendNotification($tokens, $data, UserRepository $userRep){
+        $optionBuilder = new OptionsBuilder();
+        $optionBuilder->setTimeToLive(60*20);
+
+        $option = $optionBuilder->build();
+
+        $downstreamResponse = FCM::sendTo($tokens, $option, null, $data);
+
+        $delete_queue = $downstreamResponse->tokensToDelete();
+        foreach($delete_queue as $delete) {
+            $user = $userRep->skipPresenter(true)->findWhere(['firebase_token' => $delete])->first();
+            $user->firebase_token = null;
+            $user->save();
+        }
+    }
+
+    public static function buildDataPayload($notification_id, array $others) {
+        $dataBuilder = new PayloadDataBuilder();
+
+        $data = [];
+
+        if ($notification_id == FirebaseController::NEW_FRIEND)
+            $data = FirebaseController::buildNewFriendData($others);
+
+        $dataBuilder->addData($data);
+        return $dataBuilder->build();
+    }
+
+    public static function buildNewFriendData(array $others) {
+        $data = [
+            'title' => 'New Friend',
+            'title_id' => 0,
+            'message' => 'Your friend '. $others['name']. ' is now using the app',
+            'message_id' => 0,
+            'icon' => 'https://image.tmdb.org/t/p/w185/s0C78plmx3dFcO3WMnoXCz56FiN.jpg',
+        ];
+
+        return array_merge($data, $others);
+    }
+
 
     public function test() {
         $optionBuilder = new OptionsBuilder();
