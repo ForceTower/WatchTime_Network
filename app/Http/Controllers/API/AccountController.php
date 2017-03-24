@@ -10,16 +10,15 @@ namespace WatchTime\Http\Controllers\API;
 
 
 use Facebook\Exceptions\FacebookSDKException;
-use Faker\Provider\Image;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
-use WatchTime\Http\Controllers\Auth\AuthController;
 use WatchTime\Http\Controllers\Controller;
 use WatchTime\Http\Requests\CoverUpdateRequest;
 use WatchTime\Http\Requests\CreateAccountRequest;
 use WatchTime\Http\Requests\FacebookAPILoginRequest;
+use WatchTime\Http\Requests\SetFirebaseTokenRequest;
 use WatchTime\Repositories\UserRepository;
 
 class AccountController extends Controller {
@@ -35,6 +34,15 @@ class AccountController extends Controller {
         $id = Authorizer::getResourceOwnerId();
         $user = $this->userRepository->skipPresenter(false)->find($id);
         return $user;
+    }
+
+    public function setFirebaseToken(SetFirebaseTokenRequest $request) {
+        $uid = Authorizer::getResourceOwnerId();
+        $data = $request->all();
+
+        $user = $this->userRepository->skipPresenter(true)->find($uid);
+        $user->firebase_token = $data['token'];
+        $user->save();
     }
 
     public function coverUpdate(CoverUpdateRequest $request) {

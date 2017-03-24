@@ -10,7 +10,8 @@
         "prettus/l5-repository": "^2.6",
 		"lucadegasperi/oauth2-server-laravel": "5.1.*",
         "league/fractal": "^0.15.0",
-		"sammyk/laravel-facebook-sdk": "^3.0"
+		"sammyk/laravel-facebook-sdk": "^3.0",
+        "brozot/laravel-fcm": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -28,7 +28,7 @@ Route::group(['prefix' => 'api', 'as' => 'api'], function() {
         Route::get('user/me/watchlist', 'API\UserProfileController@getWatchlist');
         Route::post('user/me/watchlist/add/movie', 'API\UserProfileController@addMovieToWatchlist');
         Route::post('user/me/watchlist/remove/movie', 'API\UserProfileController@removeMovieFromWatchlist');
-
+        Route::post('user/me/set_firebase', 'API\AccountController@setFirebaseToken');
     });
 });
 
@@ -39,6 +39,8 @@ Route::get('movies/rating/{page}', 'API\MovieGuestController@listRating');
 Route::get('movies/on_theaters/{page}', 'API\MovieGuestController@listOnTheaters');
 Route::get('movies/upcoming/{page}', 'API\MovieGuestController@listUpcoming');
 Route::get('movies/release', 'API\MovieGuestController@listRelease');
+
+Route::get('/test_firebase', 'API\FirebaseController@test');
 
 Route::get('/', function () {
     return view('welcome');

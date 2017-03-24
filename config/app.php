@@ -150,6 +150,9 @@ return [
         //Facebook
         SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class,
 
+        //Firebase
+        LaravelFCM\FCMServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -212,6 +215,9 @@ return [
         //Facebook
         'Facebook' => SammyK\LaravelFacebookSdk\FacebookFacade::class,
 
+        //Firebase
+        'FCM'      => LaravelFCM\Facades\FCM::class,
+        'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
     ],
 
 ];
