@@ -45,6 +45,12 @@ return [
             'callback' => '\WatchTime\Http\OAuth2\NoPasswordGrantVerifier@verify',
             'access_token_ttl' => 7200,
         ],
+
+        'no_password_google' => [
+            'class' => '\WatchTime\Http\OAuth2\Grant\NoPasswordGoogleGrant',
+            'callback' => '\WatchTime\Http\OAuth2\NoPasswordGoogleGrantVerifier@verify',
+            'access_token_ttl' => 7200,
+        ],
     ],
 
     /*

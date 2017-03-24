@@ -17,7 +17,7 @@ class User extends Model implements Transformable, AuthenticatableContract, Auth
     use TransformableTrait, Authenticatable, Authorizable, CanResetPassword;
 
     protected $table = 'users';
-    protected $fillable = ['name', 'email', 'password', 'facebook_id'];
+    protected $fillable = ['name', 'email', 'password', 'facebook_id', 'google_id'];
     protected $hidden = ['password', 'remember_token'];
 
     public function cover() {

@@ -13,11 +13,13 @@ use Facebook\Exceptions\FacebookSDKException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use PulkitJalan\Google\Facades\Google;
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 use WatchTime\Http\Controllers\Controller;
 use WatchTime\Http\Requests\CoverUpdateRequest;
 use WatchTime\Http\Requests\CreateAccountRequest;
 use WatchTime\Http\Requests\FacebookAPILoginRequest;
+use WatchTime\Http\Requests\GoogleAPILoginRequest;
 use WatchTime\Http\Requests\SetFirebaseTokenRequest;
 use WatchTime\Repositories\UserRepository;
 
@@ -85,6 +87,7 @@ class AccountController extends Controller {
             return [
                 'error' => true,
                 'error_description' => 'Facebook failed to get profile',
+                'error_code' => 0,
                 'exception' => $e->getMessage(),
             ];
         }
@@ -120,9 +123,6 @@ class AccountController extends Controller {
                 $uid = $user->id;
                 file_put_contents(public_path()."/profile_img/$uid.png", $img_data);
 
-                $user->avatar = $img_data;
-                $user->save();
-
                 $array = $this->userRepository->skipPresenter(false)->find($user['id']);
                 $array['not_registered'] = 'Account Created';
                 Auth::login($user);
@@ -131,10 +131,66 @@ class AccountController extends Controller {
         } else {
             return [
                 'error' => true,
+                'error_code' => 3,
                 'error_description' => 'ID\'s differ on Server/Android',
             ];
         }
+    }
 
+    public function googleLogin(GoogleAPILoginRequest $request) {
+        $data = $request->all();
+
+        $client = Google::getClient();
+        $payload = $client->verifyIdToken($data['google_token']);
+
+        if ($payload) {
+            $uid = $payload['sub'];
+            if ($uid !== $data['google_id'])
+                return [
+                    'error' => true,
+                    'error_code' => 3,
+                    'error_description' => 'ID\'s differ on Server/Android',
+                ];
+
+            $user = $this->userRepository->findWhere(['google_id' => $uid])->first();
+            if ($user)
+                return $this->userRepository->skipPresenter(false)->find($user['id']);
+
+            $user = $this->userRepository->findWhere(['email' => $payload['email']])->first();
+            if ($user) {
+                return [
+                    'error' => true,
+                    'error_code' => 1,
+                    'error_description' => 'Email already registered',
+                ];
+            }
+
+            $img_data = file_get_contents($payload['picture']);
+
+            $userData = [
+                'name' => $payload['name'],
+                'email' => $payload['email'],
+                'password' => Hash::make(str_random(10)),
+                'google_id' => $payload['sub'],
+            ];
+
+            $user = $this->userRepository->create($userData);
+
+            $uid = $user->id;
+            file_put_contents(public_path()."/profile_img/$uid.png", $img_data);
+
+            $array = $this->userRepository->skipPresenter(false)->find($user['id']);
+            $array['not_registered'] = 'Account Created';
+            Auth::login($user);
+            return $array;
+
+        } else {
+            return [
+                'error' => true,
+                'error_code' => 0,
+                'error_description' => 'Google Failed to Authenticate your token'
+            ];
+        }
     }
 
     public function createAccount(CreateAccountRequest $request) {

@@ -17,6 +17,7 @@ Route::post('oauth/access_token', function() {
 
 Route::group(['prefix' => 'api', 'as' => 'api'], function() {
     Route::post('facebook/login', 'API\AccountController@facebookLogin');
+    Route::post('google/login', 'API\AccountController@googleLogin');
     Route::post('user/sign_up', 'API\AccountController@createAccount');
 
     Route::group(['prefix' => 'watch_time', 'middleware' => 'oauth', 'as' => '.watch_time'], function() {

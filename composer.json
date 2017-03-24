@@ -11,7 +11,8 @@
 		"lucadegasperi/oauth2-server-laravel": "5.1.*",
         "league/fractal": "^0.15.0",
 		"sammyk/laravel-facebook-sdk": "^3.0",
-        "brozot/laravel-fcm": "^1.2"
+        "brozot/laravel-fcm": "^1.2",
+        "pulkitjalan/google-apiclient": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

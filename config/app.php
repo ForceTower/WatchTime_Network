@@ -153,6 +153,9 @@ return [
         //Firebase
         LaravelFCM\FCMServiceProvider::class,
 
+        //Google API
+        PulkitJalan\Google\GoogleServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -218,6 +221,9 @@ return [
         //Firebase
         'FCM'      => LaravelFCM\Facades\FCM::class,
         'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
+
+        //Google API
+        'Google' => PulkitJalan\Google\Facades\Google::class,
     ],
 
 ];

@@ -30,7 +30,7 @@ class FirebaseController extends Controller {
         $notificationBuilder->setBody('Realmente me faz pensar')->setSound('default')->setIcon('app_logo');
 
         $dataBuilder = new PayloadDataBuilder();
-        $dataBuilder->addData(['message' => 'Thinking...', 'title' => 'Hum...']);
+        $dataBuilder->addData(['message' => 'Thinking...', 'title' => 'Hum...', 'icon' => 'https://image.tmdb.org/t/p/w185/s0C78plmx3dFcO3WMnoXCz56FiN.jpg']);
 
         $option = $optionBuilder->build();
         $notification = $notificationBuilder->build();
