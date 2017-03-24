@@ -25,9 +25,10 @@ class FirebaseController extends Controller {
     public function test() {
         $optionBuilder = new OptionsBuilder();
         $optionBuilder->setTimeToLive(60*20);
+        $optionBuilder->setCollapseKey('Tester');
 
         $notificationBuilder = new PayloadNotificationBuilder('Hum...');
-        $notificationBuilder->setBody('Realmente me faz pensar')->setSound('default');
+        $notificationBuilder->setBody('Realmente me faz pensar')->setSound('default')->setIcon('kappa');
 
         $dataBuilder = new PayloadDataBuilder();
         $dataBuilder->addData(['message' => 'Server Test Message']);
@@ -36,15 +37,31 @@ class FirebaseController extends Controller {
         $notification = $notificationBuilder->build();
         $data = $dataBuilder->build();
 
-        $token = $this->userRepository->find(17)->firebase_token;
+        $tokens =[];
 
-        $downstreamResponse = FCM::sendTo($token, $option, $notification, $data);
+        $users = $this->userRepository->skipPresenter(true)->all();
+        foreach ($users as $user) {
+            $token = $user->firebase_token;
+            if ($token !== null)
+                array_push($tokens, $token);
+        }
+
+        if(sizeof($tokens) === 0)
+            return;
+
+        $downstreamResponse = FCM::sendTo($tokens, $option, $notification, $data);
 
         $downstreamResponse->numberSuccess();
         $downstreamResponse->numberFailure();
         $downstreamResponse->numberModification();
 
-        $downstreamResponse->tokensToDelete();
+
+        $delete_queue = $downstreamResponse->tokensToDelete();
+        foreach($delete_queue as $delete) {
+            $user = $this->userRepository->skipPresenter(true)->findWhere(['firebase_token' => $delete])->first();
+            $user->firebase_token = null;
+            $user->save();
+        }
 
         //return Array (key : oldToken, value : new token - you must change the token in your database )
         $downstreamResponse->tokensToModify();
